@@ -1,0 +1,154 @@
+THEORY
+Reals    //   RReal theory
+IMPORTS THEORY PROJECTS
+[SimpleDEq] 
+THEORIES
+  Relation
+AXIOMATIC DEFINITIONS
+Rdef
+TYPES
+RReal
+OPERATORS
+•Rzero:   Rzero()    EXPRESSION PREFIX      RReal
+•Rone:    Rone()     EXPRESSION PREFIX      RReal
+•Rtwo:    Rtwo()     EXPRESSION PREFIX      RReal
+AXIOMS
+oneIsNotZero:   Rone ≠ Rzero
+twoIsNotOne:    Rtwo ≠ Rone
+twoIsNotZero:   Rtwo ≠ Rzero
+Rorder
+OPERATORS
+•leq:   leq()    EXPRESSION PREFIX      RReal ↔ RReal
+•lt:    lt()     EXPRESSION PREFIX      RReal ↔ RReal
+•geq:   geq()    EXPRESSION PREFIX      RReal ↔ RReal
+•gt:    gt()     EXPRESSION PREFIX      RReal ↔ RReal
+•Rmax:    Rmax(A : ℙ(RReal))     EXPRESSION PREFIX      RReal
+•Rmin:    Rmin(A : ℙ(RReal))     EXPRESSION PREFIX      RReal
+•Rsup:    Rsup(A : ℙ(RReal))     EXPRESSION PREFIX      RReal
+•Rinf:    Rinf(A : ℙ(RReal))     EXPRESSION PREFIX      RReal
+AXIOMS
+leqDef:   order(leq)
+leqTotal:   total(leq)
+ltDef:    lt = strict(leq)
+geqDef:   geq = converse(leq)
+gtDef:    gt = strict(geq)
+supremumProperty:   
+∀ P · P ∈ ℙ(RReal) ∧ P ≠ ∅ ⇒ (
+(∃ m · m ∈ RReal ∧ upperBound(leq,P,m)) ⇒
+(∃ B · B ∈ RReal ∧ supremum(leq,P,B))
+)
+zeroLtOne:    (Rzero ↦ Rone) ∈ lt
+oneLtTwo:   (Rone ↦ Rtwo) ∈ lt
+RmaxDef:    ∀ S · S ⊆ RReal ∧ hasMaximum(leq,S) ⇒ (Rmax(S) = Gmax(leq,S))
+RminDef:    ∀ S · S ⊆ RReal ∧ hasMinimum(leq,S) ⇒ (Rmin(S) = Gmin(leq,S))
+RsupDef:    ∀ S · S ⊆ RReal ∧ upperBounded(leq,S) ⇒ (Rsup(S) = Gsup(leq,S))
+RinfDef:    ∀ S · S ⊆ RReal ∧ lowerBounded(leq,S) ⇒ (Rinf(S) = Ginf(leq,S))
+Rparts
+OPERATORS
+•RRealStar:   RRealStar()    EXPRESSION PREFIX      ℙ(RReal)
+•RRealPlus:   RRealPlus()    EXPRESSION PREFIX      ℙ(RReal)
+•RRealMinus:    RRealMinus()     EXPRESSION PREFIX      ℙ(RReal)
+•RRealPlusStar:   RRealPlusStar()    EXPRESSION PREFIX      ℙ(RReal)
+•RRealMinusStar:    RRealMinusStar()     EXPRESSION PREFIX      ℙ(RReal)
+AXIOMS
+realStarDef:    RRealStar = { x ∣ x ∈ RReal ∧ x ≠ Rzero }
+realPlusDef:    RRealPlus = { x ∣ Rzero ↦ x ∈ leq }
+realMinusDef:   RRealMinus = { x ∣ x ↦ Rzero ∈ leq }
+realPlusStarDef:    RRealPlusStar = { x ∣ Rzero ↦ x ∈ lt }
+realMinusStarDef:   RRealMinusStar = { x ∣ x ↦ Rzero ∈ lt }
+Roperators
+OPERATORS
+•plus:    plus()     EXPRESSION PREFIX      ℙ(RReal×RReal×RReal)
+•times:   times()    EXPRESSION PREFIX      ℙ(RReal×RReal×RReal)
+•uminus:    uminus()     EXPRESSION PREFIX      ℙ(RReal×RReal)
+•inverse:   inverse()    EXPRESSION PREFIX      ℙ(RReal×RReal)
+•minus:   minus()    EXPRESSION PREFIX      ℙ(RReal×RReal×RReal)
+•divide:    divide()     EXPRESSION PREFIX      ℙ(RReal×RReal×RReal)
+•abs:   abs()    EXPRESSION PREFIX      ℙ(RReal×RReal)
+•sqrt:    sqrt()     EXPRESSION PREFIX      ℙ(RReal×RReal)
+AXIOMS
+plusType:   plus ∈ ((RReal×RReal) → RReal)
+timesType:    times ∈ ((RReal×RReal) → RReal)
+uminusType:   uminus ∈ (RReal ⤖ RReal)
+inverseType:    inverse ∈ (RRealStar ⤖ RRealStar)
+minusType:    minus ∈ ((RReal×RReal) → RReal)
+divideType:   divide ∈ ((RReal×RRealStar) → RReal)
+uminusDef:    ∀ x · x ∈ RReal ⇒ (inverses(plus,Rzero,x,uminus(x)))
+minusDef:   
+∀ x, y · x ∈ RReal ∧ y ∈ RReal ⇒ (
+minus(x ↦ y) = plus(x ↦ uminus(y))
+)
+inverseDef:   
+∀ x · x ∈ RReal ∧ x ≠ Rzero ⇒ (
+times(x ↦ inverse(x)) = Rone
+)
+divideDef:    
+∀ x, y · x ∈ RReal ∧ y ∈ RReal ∧ y ≠ Rzero ⇒ (
+divide(x ↦ y) = times(x ↦ inverse(y))
+)
+absType:    abs ∈ (RReal → RRealPlus)
+absPos:   ∀ x · x ∈ RReal ⇒ (Rzero ↦ abs(x) ∈ leq)
+absZero:    ∀ x · x ∈ RReal ⇒ ((x = Rzero) ⇔ (abs(x) = Rzero))
+absDef:   
+∀ x · x ∈ RReal ⇒ (
+((x ↦ Rzero ∈ lt) ⇒ (abs(x) = uminus(x))) ∧
+((Rzero ↦ x ∈ lt) ⇒ (abs(x) = x))
+)
+absTriangular:    
+∀ x, y · x ∈ RReal ∧ y ∈ RReal ⇒ (
+(abs(plus(x ↦ y)) ↦ plus(abs(x) ↦ abs(y)) ∈ leq)
+)
+absMinus:   ∀ x · x ∈ RReal ⇒ (abs(uminus(x)) = abs(x))
+absMult:    
+∀ x, y · x ∈ RReal ∧ y ∈ RReal ⇒ (
+abs(times(x ↦ y)) = times(abs(x) ↦ abs(y))
+)
+sqrtType:   sqrt ∈ (RRealPlus ⤖ RRealPlus)
+sqrtDef:    ∀ x · x ∈ RRealPlus ⇒ (times(sqrt(x) ↦ sqrt(x)) = x)
+twoDef:   Rtwo = plus(Rone ↦ Rone)
+Rstructure
+AXIOMS
+realField:    Field(plus,times,Rzero,Rone)
+realIntegrity:    integral(times,Rzero)
+ringCompatibility:    ringCompatible(plus,times,Rzero,Rone,leq)
+THEOREMS
+RzeroLtRtwo   :     Rzero ↦ Rtwo ∈ lt
+uminusOrderInversion   :    ∀ x · x ∈ RReal ∧ (Rzero ↦ x ∈ leq) ⇒ (uminus(x) ↦ Rzero ∈ leq)
+uminusInvolutive   :    ∀ x · x ∈ RReal ⇒ (uminus(uminus(x)) = x)
+uminusNeutrality   :    uminus(Rzero)=Rzero
+inverseInvolutive   :     ∀ x · x ∈ RReal ∧ x ≠ Rzero ⇒ (inverse(inverse(x)) = x)
+sqrtTimesDistrib   :    
+∀ x, y · x ∈ RRealPlus ∧ y ∈ RRealPlus ⇒ (
+sqrt(times(x ↦ y)) = times(sqrt(x) ↦ sqrt(y))
+)
+sqrtOne   :     sqrt(Rone) = Rone
+sqrtZero   :    sqrt(Rzero) = Rzero
+realNotUpperBounded   :     ∀ x · x ∈ RReal ⇒ (∃ x2 · x2 ∈ RReal ∧ x ↦ x2 ∈ lt)
+realNotLowerBounded   :     ∀ x · x ∈ RReal ⇒ (∃ x2 · x2 ∈ RReal ∧ x2 ↦ x ∈ lt)
+realPlusNotBounded   :    ∀ x · x ∈ RRealPlus ⇒ (∃ x2 · x2 ∈ RRealPlus ∧ x ↦ x2 ∈ lt)
+realMinusNotBounded   :     ∀ x · x ∈ RRealMinus ⇒ (∃ x2 · x2 ∈ RRealMinus ∧ x2 ↦ x ∈ lt)
+realPlusOrder   :     ∀ a, b · a ∈ RRealPlus ∧ b ∈ RReal ∧ (a ↦ b ∈ leq) ⇒ b ∈ RRealPlus
+realMinusOrder   :    ∀ a, b · a ∈ RRealMinus ∧ b ∈ RReal ∧ (b ↦ a ∈ leq) ⇒ b ∈ RRealMinus
+plusCompatibility   :     
+∀ a, b, c · a ∈ RReal ∧ b ∈ RReal ∧ c ∈ RReal ∧ (a ↦ b ∈ leq) ∧ (a ↦ c ∈ leq) ⇒
+(a ↦ plus(b ↦ c) ∈ leq)
+plusCompatibility2   :    
+∀ a, b, c ·
+a ∈ RReal ∧ b ∈ RReal ∧ c ∈ RReal ∧
+plus(a ↦ b) ↦ c ∈ leq ∧ Rzero ↦ b ∈ leq ⇒
+a ↦ c ∈ leq
+extendedTransitivity   :    
+∀ a, b, c ·
+a ∈ RReal ∧ b ∈ RReal ∧ c ∈ RReal ∧
+a ↦ b ∈ leq ∧ b ↦ c ∈ lt ⇒
+a ↦ c ∈ lt
+extendedTransitivity2   :     
+∀ a, b, c ·
+a ∈ RReal ∧ b ∈ RReal ∧ c ∈ RReal ∧
+a ↦ b ∈ lt ∧ b ↦ c ∈ leq ⇒
+a ↦ c ∈ lt
+extendedTransitivity3   :     
+∀ a, b, c ·
+a ∈ RReal ∧ b ∈ RReal ∧ c ∈ RReal ∧
+a ↦ b ∈ lt ∧ b ↦ c ∈ lt ⇒
+a ↦ c ∈ lt

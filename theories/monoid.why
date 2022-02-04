@@ -1,0 +1,34 @@
+(** {1 Algebraic structure} 
+
+this library provides a few Why3 theories that formalize G.Dupont's Reals Theory in Event-B
+
+*)
+
+(** {1.1 Monoid} 
+Monoid Theory from G.Dupont\ref{TODO}
+*)
+
+theory Monoid
+  (** use set.Set
+  use settheoryB.Relation as R
+  use settheoryB.Function as F
+  use settheoryB.PowerRelation as P *)
+
+  (* Poser " M = set 'm " Pour une meilleure lisibilité? *)
+
+  predicate associativity (op : 'm -> 'm -> 'm) = 
+    forall x y z:'m. 
+      op x (op y z) = op (op x y) z
+
+  predicate neutral (op : 'm -> 'm -> 'm) (e : 'm) =
+    forall x : 'm.
+      op x e = x /\ op e x = x
+
+  predicate monoid (op : 'm -> 'm -> 'm) (e : 'm) =
+    associativity op /\ neutral op e
+
+  lemma neutral_unicity:
+    forall op : 'm -> 'm -> 'm, e : 'm. 
+      monoid op e -> (forall x:'m. neutral op x -> x=e)
+
+end

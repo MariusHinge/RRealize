@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="5">
+<prover id="0" name="Coq" version="8.9.1" timelimit="0" steplimit="0" memlimit="0"/>
+<file proved="true">
+<path name=".."/>
+<path name="RRealPredicate.why"/>
+<theory name="Rorder">
+ <goal name="Refl">
+ </goal>
+ <goal name="Trans">
+ </goal>
+ <goal name="Antisymm">
+ </goal>
+ <goal name="Total">
+ </goal>
+</theory>
+<theory name="THEOREMS">
+ <goal name="rzeroLtrtwo">
+ </goal>
+ <goal name="uminusOrderInversion">
+ </goal>
+ <goal name="uminusInvolutive">
+ </goal>
+ <goal name="uminusNeutrality">
+ <proof prover="0" obsolete="true" edited="RRealPredicate_THEOREMS_uminusNeutrality_1.v"><result status="unknown" time="0.00" steps="0"/></proof>
+ </goal>
+</theory>
+</file>
+</why3session>

@@ -1,0 +1,268 @@
+  (** n. RReal *)
+
+  (** AXIOMATIC DEFINITIONS *)
+  (** 1. Rdef *)
+theory Rdef
+  (** use setB.Set *)
+  use set.Set
+  (** Attention, rreal n'est pas un set*)
+  (** Choix de définition: Axiomatic type (in B) = type in why3 *)
+  type rreal
+  constant setrreal : set rreal
+
+  (** Choix de définition: Operator with no argument => constant*)
+  constant rzero : rreal
+  constant rone : rreal
+  constant rtwo : rreal
+
+  axiom oneIsNotZero:
+    not (rone = rzero)
+  axiom twoIsNotOne:
+    not (rtwo = rone)
+  axiom twoIsNotZero:
+    not (rtwo = rzero)
+end
+
+(** {2. Rorder} *)
+theory Rorder
+  use Rdef
+  (** use setB.Set *)
+  use set.Set
+  use export settheoryB.Relation
+  use export settheoryB.PowerSet
+
+  (** Choix de définition: Operator with no argument => operateur de relation constant*)
+  constant leq : (rel (rreal) (rreal))
+  constant lt : (rel (rreal) (rreal))
+  constant geq : (rel (rreal) (rreal))
+  constant gt : (rel (rreal) (rreal))
+
+  (** TODO Besoin de la theory Relation de guillaume. *)
+  (** axiom leqDef:
+    order(leq) *)
+  (** axiom leqTotal:
+    total(leq) *)
+  (** axiom ltDef:
+    lt = strict(leq) *)
+  (** axiom geqDef:
+    geq = converse(leq) *)
+  (** axiom gtDef:
+    gt = strict(geq) *)
+
+  (** TODO Besoin de la theory pour upperBound et supremum de guillaume. *)
+  (** axiom supremumProperty:
+    forall p : (set rreal). not (p = empty) /\ (
+    exists m : rreal. upperBound(leq,p,m) -> 
+    (exists b : rreal. supremum(leq,p,b))
+    )
+  *)
+  axiom zeroLtOne:
+    mem (rzero, rone) lt
+  axiom oneLtTwo:
+    mem (rone, rtwo) lt
+
+  (** TODO Besoin de la theory pour hasMax, ... de guillaume *)
+  (** axiom RmaxDef:
+    ∀ S · S ⊆ RReal ∧ hasMaximum(leq,S) -> (Rmax(S) = Gmax(leq,S))
+  axiom RminDef:
+    ∀ S · S ⊆ RReal ∧ hasMinimum(leq,S) -> (Rmin(S) = Gmin(leq,S))
+  axiom RsupDef:
+    ∀ S · S ⊆ RReal ∧ upperBounded(leq,S) -> (Rsup(S) = Gsup(leq,S))
+  axiom RinfDef:
+    ∀ S · S ⊆ RReal ∧ lowerBounded(leq,S) -> (Rinf(S) = Ginf(leq,S))
+  *)
+end
+
+(** {3. Rparts} *)
+theory Rparts
+  use Rdef
+  use Rorder
+  use set.Set
+  (* use setB.Set *)
+
+  (** TODO Ajouter la bibli HighOrd à why3*)
+  (** use setB.SetComprehension *)
+
+(** Original de Dupont
+  OPERATORS
+•RRealStar:   RRealStar()    EXPRESSION PREFIX      ℙ(RReal)
+•RRealPlus:   RRealPlus()    EXPRESSION PREFIX      ℙ(RReal)
+•RRealMinus:    RRealMinus()     EXPRESSION PREFIX      ℙ(RReal)
+•RRealPlusStar:   RRealPlusStar()    EXPRESSION PREFIX      ℙ(RReal)
+•RRealMinusStar:    RRealMinusStar()     EXPRESSION PREFIX      ℙ(RReal) 
+*)
+
+  constant rrealStar:  (set rreal)
+  constant rrealPlus:  (set rreal)
+  constant rrealMinus: (set rreal)
+  constant rrealPlusStar:   (set rreal)
+  constant rrealMinusStar:  (set rreal)
+
+(** Original de Dupont
+  AXIOMS
+realStarDef:    RRealStar = { x ∣ x ∈ RReal ∧ x ≠ Rzero }
+realPlusDef:    RRealPlus = { x ∣ Rzero ↦ x ∈ leq }
+realMinusDef:   RRealMinus = { x ∣ x ↦ Rzero ∈ leq }
+realPlusStarDef:    RRealPlusStar = { x ∣ Rzero ↦ x ∈ lt }
+realMinusStarDef:   RRealMinusStar = { x ∣ x ↦ Rzero ∈ lt }
+*)
+  (** Doit être ajouté à la main *)
+  predicate notRzero = (forall x: rreal. not(x = rzero))
+  predicate isPos = (forall x : rreal. mem (rzero, x) leq)
+  predicate isNeg = (forall x : rreal. mem (x, rzero) leq)
+  predicate isStrictPos = (forall x : rreal. mem (rzero, x) lt)
+  predicate isStrictNeg = (forall x : rreal. mem (x, rzero) lt)
+
+  (** TODO add setB.SetComprehension *)
+  (** 
+  axiom realStarDef:
+    rrealStar = (filter (notRzero) (setrreal))
+  axiom realPlusDef:
+    rrealPlus = (filter (isPos) (setrreal))
+  axiom realMinusDef:
+    rrealMinus = (filter (isNeg) (setrreal))
+  axiom realPlusStarDef:
+    rrealPlusStar = (filter (isStrictPos) (setrreal))
+  axiom realMinusStarDef:
+    rrealMinusStar = (filter (isStrictNeg) (setrreal))
+  *)
+end
+
+(** {4. Roperators} *)
+theory Roperators
+  use Rdef
+  use Rorder
+  use Rparts
+  use settheoryB.Function
+  use settheoryB.PowerRelation as PR
+(**  
+  OPERATORS
+• plus:    plus()     EXPRESSION PREFIX      ℙ(RReal×RReal×RReal)
+• times:   times()    EXPRESSION PREFIX      ℙ(RReal×RReal×RReal)
+• uminus:    uminus()     EXPRESSION PREFIX      ℙ(RReal×RReal)
+• inverse:   inverse()    EXPRESSION PREFIX      ℙ(RReal×RReal)
+• minus:   minus()    EXPRESSION PREFIX      ℙ(RReal×RReal×RReal)
+• divide:    divide()     EXPRESSION PREFIX      ℙ(RReal×RReal×RReal)
+• abs:   abs()    EXPRESSION PREFIX      ℙ(RReal×RReal)
+• sqrt:    sqrt()     EXPRESSION PREFIX      ℙ(RReal×RReal)
+*)
+
+  (** Choix de traduction: ℙ(RReal×RReal×RReal) => 
+          (((rreal, rreal), rreal) -> bool)
+    Fonctionne bizarrement
+  *)
+  (** TODO Plus propre et systématique la définition des fonctions *)
+(*   
+  predicate plus_relation: (((rreal, rreal), rreal)
+  constant times: (((rreal, rreal), rreal) -> bool)
+  constant uminus: ((rreal, rreal) -> bool)
+  constant inverse: ((rreal, rreal) -> bool)
+  constant minus: (((rreal, rreal), rreal) -> bool)
+  constant divide: (((rreal, rreal), rreal) -> bool)
+  constant abs: ((rreal, rreal) -> bool)
+  constant sqrt: ((rreal, rreal) -> bool)
+*)
+
+  constant plus: (rreal, rreal) -> rreal
+  constant times: (rreal, rreal) -> rreal
+  constant uminus: rreal -> rreal
+  constant inverse: rreal -> rreal
+  constant minus: (rreal, rreal) -> rreal
+  constant divide: (rreal, rreal) -> rreal
+  constant abs: rreal -> rreal
+  constant sqrt: rreal -> rreal
+
+(* TODO corriger? Non traité!
+  axiom plusType:
+    mem plus_relation ((PR.times (setrreal) (setrreal)) --> setrreal)
+  axiom timesType:
+    mem times ((PR.times (setrreal) (setrreal)) --> setrreal)
+  axiom uminusType:
+    mem uminus (setrreal --> setrreal)
+  axiom inverseType:
+    mem inverse (rrealStar --> rrealStar)
+  axiom minusType:
+    mem minus ((PR.times (setrreal) (setrreal)) --> setrreal)
+  axiom divideType:
+    mem divide_relation ((PR.times (setrreal) (rrealStar)) --> setrreal)
+  axiom absType:
+      abs ∈ (rreal → rrealPlus)
+  axiom sqrtType:
+     mem sqrt (rrealPlus --> rrealPlus)
+*)
+
+(*   axiom uminusDef:
+    forall x : rreal. (inverses(plus,rzero,x,uminus(x,x)))
+ *)
+  axiom minusDef:
+    forall x,y:rreal. minus(x, y) = plus(x, uminus y)
+  axiom inverseDef:
+    forall x:rreal. not(x=rzero) -> times(x,inverse(x)) = rone
+  axiom divideDef:
+    forall x, y:rreal. not(y = rzero) -> (
+    divide(x, y) = times(x, inverse(y)))
+  axiom absPos:
+    forall x : rreal. mem (rzero , abs(x)) leq
+  axiom absZero:
+    forall x : rreal. ((x = rzero) -> (abs(x) = rzero))
+  axiom absDef:
+    forall x : rreal. 
+      ((mem (x, rzero) lt) -> (abs(x) = uminus(x))) /\
+      ((mem (rzero, x) lt) -> (abs(x) = x))
+  axiom absTriangular:
+    forall x, y : rreal. 
+      mem (abs(plus(x, y)), plus(abs(x), abs(y))) leq
+  axiom absMinus:
+    forall x : rreal. (abs(uminus(x)) = abs(x))
+  axiom absMult:
+    forall x, y : rreal.
+      abs(times(x, y)) = times(abs(x), abs(y))
+  axiom sqrtDef:
+    forall x : rreal. (mem x rrealPlus) -> (times ((sqrt x), (sqrt x)) = x)
+  axiom twoDef:
+     rtwo = plus(rone, rone)
+end
+
+(** {5. Rstructure} *)
+theory Rstructure
+  use Rdef
+  use Rorder
+  use Rparts
+  use Roperators
+
+(** Original de Dupont
+  AXIOMS
+realField:    Field(plus,times,Rzero,Rone)
+realIntegrity:    integral(times,Rzero)
+ringCompatibility:    ringCompatible(plus,times,Rzero,Rone,leq)
+*)
+  (** TODO Ajouter les structures de Guillaume *)
+  (** 
+  axiom realField: 
+    Field(plus,times,Rzero,Rone)
+  axiom realIntegrity:
+    integral(times,Rzero)
+  axiom ringCompatibility:
+    ringCompatible(plus,times,Rzero,Rone,leq)
+  *)
+end
+
+(** THEOREMS *)
+
+theory THEOREMS
+  use Rdef
+  use Rorder
+  use Rparts
+  use Roperators
+  use Rstructure
+
+  goal rzeroLtrtwo:
+    mem (rzero, rtwo) lt
+  goal uminusOrderInversion:
+    forall x : rreal. 
+      (mem (rzero, x) leq) -> mem (uminus(x), rzero) leq
+  goal uminusInvolutive:
+    forall x : rreal. (uminus(uminus(x)) = x)
+  goal uminusNeutrality: 
+    uminus(rzero)=rzero
+end
