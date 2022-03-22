@@ -221,6 +221,9 @@ Parameter abs: rreal -> rreal.
 
 Parameter sqrt: rreal -> rreal.
 
+Axiom sqrt_spec :
+  forall (x:rreal), (leq rzero x) -> ((times1 (sqrt x, sqrt x)) = x).
+
 Axiom minusDef :
   forall (x:rreal) (y:rreal), ((minus (x, y)) = (plus (x, uminus y))).
 

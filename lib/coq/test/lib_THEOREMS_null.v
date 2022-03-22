@@ -56,7 +56,13 @@ Axiom zeroLtOne : lt rzero rone.
 
 Axiom oneLtTwo : lt rone rtwo.
 
-Parameter rrealStar: rreal -> bool.
+Axiom rrealStar : Type.
+Parameter rrealStar_WhyType : WhyType rrealStar.
+Existing Instance rrealStar_WhyType.
+
+Parameter x: rrealStar -> rreal.
+
+Axiom rrealStar'invariant : forall (self:rrealStar), ~ ((x self) = rzero).
 
 Parameter rrealPlus: rreal -> bool.
 
@@ -67,7 +73,7 @@ Parameter rrealPlusStar: rreal -> bool.
 Parameter rrealMinusStar: rreal -> bool.
 
 (* Why3 assumption *)
-Definition notRzero (x:rreal) : Prop := ~ (x = rzero).
+Definition notRzero (x1:rreal) : Prop := ~ (x1 = rzero).
 
 Parameter infix_plmngt:
   forall {a:Type} {a_WT:WhyType a} {b:Type} {b_WT:WhyType b}, (a -> bool) ->
@@ -77,21 +83,21 @@ Axiom mem_function :
   forall {a:Type} {a_WT:WhyType a} {b:Type} {b_WT:WhyType b},
   forall (f:(a* b)%type -> bool) (s:a -> bool) (t:b -> bool),
   (set.Set.mem f (infix_plmngt s t)) <->
-  ((forall (x:a) (y:b), (set.Set.mem (x, y) f) ->
-    (set.Set.mem x s) /\ (set.Set.mem y t)) /\
-   forall (x:a) (y1:b) (y2:b),
-   ((set.Set.mem (x, y1) f) /\ (set.Set.mem (x, y2) f)) -> (y1 = y2)).
+  ((forall (x1:a) (y:b), (set.Set.mem (x1, y) f) ->
+    (set.Set.mem x1 s) /\ (set.Set.mem y t)) /\
+   forall (x1:a) (y1:b) (y2:b),
+   ((set.Set.mem (x1, y1) f) /\ (set.Set.mem (x1, y2) f)) -> (y1 = y2)).
 
 Axiom domain_function :
   forall {a:Type} {a_WT:WhyType a} {b:Type} {b_WT:WhyType b},
-  forall (f:(a* b)%type -> bool) (s:a -> bool) (t:b -> bool) (x:a) (y:b),
-  (set.Set.mem f (infix_plmngt s t)) -> (set.Set.mem (x, y) f) ->
-  set.Set.mem x s.
+  forall (f:(a* b)%type -> bool) (s:a -> bool) (t:b -> bool) (x1:a) (y:b),
+  (set.Set.mem f (infix_plmngt s t)) -> (set.Set.mem (x1, y) f) ->
+  set.Set.mem x1 s.
 
 Axiom range_function :
   forall {a:Type} {a_WT:WhyType a} {b:Type} {b_WT:WhyType b},
-  forall (f:(a* b)%type -> bool) (s:a -> bool) (t:b -> bool) (x:a) (y:b),
-  (set.Set.mem f (infix_plmngt s t)) -> (set.Set.mem (x, y) f) ->
+  forall (f:(a* b)%type -> bool) (s:a -> bool) (t:b -> bool) (x1:a) (y:b),
+  (set.Set.mem f (infix_plmngt s t)) -> (set.Set.mem (x1, y) f) ->
   set.Set.mem y t.
 
 Axiom function_extend_range :
@@ -104,7 +110,7 @@ Axiom function_reduce_range :
   forall {a:Type} {a_WT:WhyType a} {b:Type} {b_WT:WhyType b},
   forall (f:(a* b)%type -> bool) (s:a -> bool) (t:b -> bool) (u:b -> bool),
   (set.Set.subset u t) -> (set.Set.mem f (infix_plmngt s t)) ->
-  (forall (x:a) (y:b), (set.Set.mem (x, y) f) -> set.Set.mem y u) ->
+  (forall (x1:a) (y:b), (set.Set.mem (x1, y) f) -> set.Set.mem y u) ->
   set.Set.mem f (infix_plmngt s u).
 
 Parameter inverse:
@@ -113,8 +119,8 @@ Parameter inverse:
 
 Axiom Inverse_def :
   forall {a:Type} {a_WT:WhyType a} {b:Type} {b_WT:WhyType b},
-  forall (r:(a* b)%type -> bool), forall (x:a) (y:b),
-  (set.Set.mem (y, x) (inverse r)) <-> (set.Set.mem (x, y) r).
+  forall (r:(a* b)%type -> bool), forall (x1:a) (y:b),
+  (set.Set.mem (y, x1) (inverse r)) <-> (set.Set.mem (x1, y) r).
 
 Parameter dom:
   forall {a:Type} {a_WT:WhyType a} {b:Type} {b_WT:WhyType b},
@@ -122,8 +128,8 @@ Parameter dom:
 
 Axiom dom_def :
   forall {a:Type} {a_WT:WhyType a} {b:Type} {b_WT:WhyType b},
-  forall (r:(a* b)%type -> bool), forall (x:a),
-  (set.Set.mem x (dom r)) <-> exists y:b, set.Set.mem (x, y) r.
+  forall (r:(a* b)%type -> bool), forall (x1:a),
+  (set.Set.mem x1 (dom r)) <-> exists y:b, set.Set.mem (x1, y) r.
 
 Parameter ran:
   forall {a:Type} {a_WT:WhyType a} {b:Type} {b_WT:WhyType b},
@@ -132,7 +138,7 @@ Parameter ran:
 Axiom ran_def :
   forall {a:Type} {a_WT:WhyType a} {b:Type} {b_WT:WhyType b},
   forall (r:(a* b)%type -> bool), forall (y:b),
-  (set.Set.mem y (ran r)) <-> exists x:a, set.Set.mem (x, y) r.
+  (set.Set.mem y (ran r)) <-> exists x1:a, set.Set.mem (x1, y) r.
 
 Parameter infix_mnmngt:
   forall {a:Type} {a_WT:WhyType a} {b:Type} {b_WT:WhyType b}, (a -> bool) ->
@@ -168,9 +174,9 @@ Axiom apply_def2 :
 Axiom injection :
   forall {a:Type} {a_WT:WhyType a} {b:Type} {b_WT:WhyType b},
   forall (f:(a* b)%type -> bool) (s:a -> bool) (t:b -> bool),
-  forall (x:a) (y:a), (set.Set.mem f (infix_mnmngt s t)) ->
-  (set.Set.mem (inverse f) (infix_plmngt t s)) -> (set.Set.mem x s) ->
-  (set.Set.mem y s) -> ((apply f x) = (apply f y)) -> (x = y).
+  forall (x1:a) (y:a), (set.Set.mem f (infix_mnmngt s t)) ->
+  (set.Set.mem (inverse f) (infix_plmngt t s)) -> (set.Set.mem x1 s) ->
+  (set.Set.mem y s) -> ((apply f x1) = (apply f y)) -> (x1 = y).
 
 Parameter times:
   forall {a:Type} {a_WT:WhyType a} {b:Type} {b_WT:WhyType b}, (a -> bool) ->
@@ -178,9 +184,9 @@ Parameter times:
 
 Axiom times_def :
   forall {a:Type} {a_WT:WhyType a} {b:Type} {b_WT:WhyType b},
-  forall (a1:a -> bool) (b1:b -> bool) (x:a) (y:b),
-  (set.Set.mem (x, y) (times a1 b1)) <->
-  ((set.Set.mem x a1) /\ (set.Set.mem y b1)).
+  forall (a1:a -> bool) (b1:b -> bool) (x1:a) (y:b),
+  (set.Set.mem (x1, y) (times a1 b1)) <->
+  ((set.Set.mem x1 a1) /\ (set.Set.mem y b1)).
 
 (* Why3 assumption *)
 Definition relations {a:Type} {a_WT:WhyType a} {b:Type} {b_WT:WhyType b}
@@ -189,9 +195,9 @@ Definition relations {a:Type} {a_WT:WhyType a} {b:Type} {b_WT:WhyType b}
 
 Axiom break_mem_in_add :
   forall {a:Type} {a_WT:WhyType a} {b:Type} {b_WT:WhyType b},
-  forall (c:(a* b)%type) (s:(a* b)%type -> bool) (x:a) (y:b),
-  (set.Set.mem c (map.Map.set s (x, y) true)) <->
-  ((c = (x, y)) \/ (set.Set.mem c s)).
+  forall (c:(a* b)%type) (s:(a* b)%type -> bool) (x1:a) (y:b),
+  (set.Set.mem c (map.Map.set s (x1, y) true)) <->
+  ((c = (x1, y)) \/ (set.Set.mem c s)).
 
 Axiom break_power_times :
   forall {a:Type} {a_WT:WhyType a} {b:Type} {b_WT:WhyType b},
@@ -202,8 +208,8 @@ Axiom subset_of_times :
   forall {a:Type} {a_WT:WhyType a} {b:Type} {b_WT:WhyType b},
   forall (r:(a* b)%type -> bool) (u:a -> bool) (v:b -> bool),
   (set.Set.subset r (times u v)) <->
-  forall (x:a) (y:b), (set.Set.mem (x, y) r) ->
-  (set.Set.mem x u) /\ (set.Set.mem y v).
+  forall (x1:a) (y:b), (set.Set.mem (x1, y) r) ->
+  (set.Set.mem x1 u) /\ (set.Set.mem y v).
 
 Parameter plus: (rreal* rreal)%type -> rreal.
 
@@ -221,36 +227,41 @@ Parameter abs: rreal -> rreal.
 
 Parameter sqrt: rreal -> rreal.
 
+Axiom sqrt_spec :
+  forall (x1:rreal), (leq rzero x1) -> ((times1 (sqrt x1, sqrt x1)) = x1).
+
 Axiom minusDef :
-  forall (x:rreal) (y:rreal), ((minus (x, y)) = (plus (x, uminus y))).
+  forall (x1:rreal) (y:rreal), ((minus (x1, y)) = (plus (x1, uminus y))).
 
 Axiom inverseDef :
-  forall (x:rreal), ~ (x = rzero) -> ((times1 (x, inverse1 x)) = rone).
+  forall (x1:rreal), ~ (x1 = rzero) -> ((times1 (x1, inverse1 x1)) = rone).
 
 Axiom divideDef :
-  forall (x:rreal) (y:rreal), ~ (y = rzero) ->
-  ((divide (x, y)) = (times1 (x, inverse1 y))).
+  forall (x1:rreal) (y:rreal), ~ (y = rzero) ->
+  ((divide (x1, y)) = (times1 (x1, inverse1 y))).
 
-Axiom absPos : forall (x:rreal), leq rzero (abs x).
+Axiom absPos : forall (x1:rreal), leq rzero (abs x1).
 
-Axiom absZero : forall (x:rreal), (x = rzero) -> ((abs x) = rzero).
+Axiom absZero : forall (x1:rreal), (x1 = rzero) -> ((abs x1) = rzero).
 
 Axiom absDef :
-  forall (x:rreal),
-  ((lt x rzero) -> ((abs x) = (uminus x))) /\ ((lt rzero x) -> ((abs x) = x)).
+  forall (x1:rreal),
+  ((lt x1 rzero) -> ((abs x1) = (uminus x1))) /\
+  ((lt rzero x1) -> ((abs x1) = x1)).
 
 Axiom absTriangular :
-  forall (x:rreal) (y:rreal), leq (abs (plus (x, y))) (plus (abs x, abs y)).
+  forall (x1:rreal) (y:rreal),
+  leq (abs (plus (x1, y))) (plus (abs x1, abs y)).
 
-Axiom absMinus : forall (x:rreal), ((abs (uminus x)) = (abs x)).
+Axiom absMinus : forall (x1:rreal), ((abs (uminus x1)) = (abs x1)).
 
 Axiom absMult :
-  forall (x:rreal) (y:rreal),
-  ((abs (times1 (x, y))) = (times1 (abs x, abs y))).
+  forall (x1:rreal) (y:rreal),
+  ((abs (times1 (x1, y))) = (times1 (abs x1, abs y))).
 
 Axiom sqrtDef :
-  forall (x:rreal), (set.Set.mem x rrealPlus) ->
-  ((times1 (sqrt x, sqrt x)) = x).
+  forall (x1:rreal), (set.Set.mem x1 rrealPlus) ->
+  ((times1 (sqrt x1, sqrt x1)) = x1).
 
 Axiom twoDef : (rtwo = (plus (rone, rone))).
 

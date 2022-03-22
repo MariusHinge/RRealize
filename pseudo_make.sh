@@ -33,3 +33,5 @@ why3 realize -L theories/ -D coq -T RRealPredicate.Rparts -o lib/coq/test
 why3 realize -L theories/ -D coq -T RRealPredicate.Roperators -o lib/coq/test
 why3 realize -L theories/ -D coq -T RRealPredicate.Rstructure -o lib/coq/test
 why3 realize -L theories/ -D coq -T RRealPredicate.THEOREMS -o lib/coq/test
+
+why3 realize -L theories/ -D coq -T RReal_requires.THEOREMS -o lib/coq/test
